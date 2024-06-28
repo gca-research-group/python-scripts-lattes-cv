@@ -1,6 +1,5 @@
 import os
 import xml.etree.ElementTree as ET
-from fpdf import FPDF
 import numpy as np
 
 # Função para contar orientações concluídas em um arquivo XML
@@ -93,12 +92,7 @@ def extrair_numero_publicacoes(xml_file):
     return len(list(root.iter('ARTIGO-PUBLICADO')))
 
 # Caminho dos arquivos XML
-path = r'C:\Users\radim\Desktop\curriculos'
-
-# Inicialização do PDF
-pdf = FPDF()
-pdf.add_page()
-pdf.set_font("Arial", size=12)
+path = r'C:\Users\radim\Desktop\ppgmmc'
 
 # Pesos e limites
 pesos = {
@@ -151,30 +145,8 @@ for root_dir, dirs, files in os.walk(path):
             print(f"Experiência em Mestrado: {concluida['mestrado'] + andamento['mestrado']}")
             print(f"Experiência em Doutorado: {concluida['doutorado'] + andamento['doutorado']}")
             print(f"Pontuação da Experiência: {pontuacao_experiencia:.2f}")
-            print("")
-
-            # Adicionar informações ao PDF
-            pdf.set_font("Arial", style='B', size=12)
-            pdf.cell(200, 10, txt=f"Orientador: {orientador_nome}", ln=True)
-            pdf.ln(5)
-
-            pdf.set_font("Arial", style='B', size=12)
-            pdf.cell(200, 10, txt="Experiência:", ln=True)
-            pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, txt=f"Número de Artigos Publicados: {P_r}", ln=True)  # Adicionar número de artigos publicados
-            pdf.cell(200, 10, txt=f"Experiência em Graduação: {concluida['graduacao'] + andamento['graduacao']}", ln=True)
-            pdf.cell(200, 10, txt=f"Experiência em Mestrado: {concluida['mestrado'] + andamento['mestrado']}", ln=True)
-            pdf.cell(200, 10, txt=f"Experiência em Doutorado: {concluida['doutorado'] + andamento['doutorado']}", ln=True)
-            pdf.cell(200, 10, txt=f"Pontuação da Experiência: {pontuacao_experiencia:.2f}", ln=True)
-            pdf.ln(10)
-
-# Salvar o PDF
-pdf.output(r'C:\Users\radim\Desktop\calculo_pe.pdf')
+            print("-" * 40)
 
 # Imprimir o total de pastas e arquivos varridos
 print(f"Total de pastas varridas: {total_pastas}")
 print(f"Total de arquivos XML varridos: {total_arquivos}")
-
-print("PDF gerado com sucesso!")
-
-

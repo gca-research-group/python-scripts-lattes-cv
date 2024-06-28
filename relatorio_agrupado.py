@@ -1,6 +1,5 @@
 import os
 import xml.etree.ElementTree as ET
-from fpdf import FPDF
 
 def contar_itens(tag_name, root):
     return len(root.findall(f".//{tag_name}"))
@@ -33,7 +32,7 @@ def count_orientacoes_concluidas(root):
         natureza = orientacao.attrib.get('NATUREZA', '').upper()
         if natureza == 'INICIACAO_CIENTIFICA':
             orientacoes_concluidas['iniciacao_cientifica'] += 1
-        elif natureza == 'TRABALHO_DE_CONCLUSAO_DE_CURSO_GRADUACAO':
+        elif natureza == 'TRABALHO_DE_CONCLUSAO_DE-CURSO_GRADUACAO':
             orientacoes_concluidas['graduacao'] += 1
 
     return orientacoes_concluidas
@@ -67,17 +66,6 @@ def count_orientacoes_andamento(root):
             orientacoes_andamento['doutorado'] += 1
 
     return orientacoes_andamento
-
-def calcular_pontuacao(experiencia, pesos, tempos):
-    n_total = sum(experiencia.values())
-    if n_total == 0:
-        return 0
-
-    pontuacao = 0
-    for i, nivel in enumerate(["iniciacao_cientifica", "graduacao", "mestrado", "doutorado"]):
-        pontuacao += (pesos[i] * tempos[i] * experiencia[nivel]) / n_total
-    
-    return pontuacao
 
 def analisar_arquivo(file_path):
     try:
@@ -126,60 +114,7 @@ def analisar_arquivo(file_path):
         "orientacoes_andamento": orientacoes_andamento
     })
 
-    experiencia = {
-        'iniciacao_cientifica': orientacoes_concluidas['iniciacao_cientifica'] + orientacoes_andamento['iniciacao_cientifica'],
-        'graduacao': orientacoes_concluidas['graduacao'] + orientacoes_andamento['graduacao'],
-        'mestrado': orientacoes_concluidas['mestrado'] + orientacoes_andamento['mestrado'],
-        'doutorado': orientacoes_concluidas['doutorado'] + orientacoes_andamento['doutorado']
-    }
-    
-    pesos = [1, 2, 3, 4]
-    tempos = [1, 1, 2, 4]
-    contagens['pontuacao_experiencia'] = calcular_pontuacao(experiencia, pesos, tempos)
-
     return contagens
-
-def gerar_relatorio_pdf(resultados):
-    pdf = FPDF()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
-
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="Relatório de Análise de XML", ln=True, align='C')
-
-    for file_name, contagens in resultados.items():
-        pdf.ln(10)
-        pdf.set_font("Arial", style='B', size=12)
-        pdf.cell(200, 10, txt=f"Arquivo: {file_name}", ln=True)
-        pdf.set_font("Arial", size=12)
-        
-        # Exibir formação do orientador
-        pdf.cell(200, 10, txt="Formação do Orientador:", ln=True)
-        for chave, valor in contagens["formacao_do_orientador"].items():
-            pdf.cell(200, 10, txt=f"{chave}: {valor} itens", ln=True)
-        
-        # Separar orientações concluídas e em andamento
-        pdf.cell(200, 10, txt="Orientações Concluídas:", ln=True)
-        for chave, valor in contagens["orientacoes_concluidas"].items():
-            pdf.cell(200, 10, txt=f"{chave}: {valor} itens", ln=True)
-        
-        pdf.cell(200, 10, txt="Orientações em Andamento:", ln=True)
-        for chave, valor in contagens["orientacoes_andamento"].items():
-            pdf.cell(200, 10, txt=f"{chave}: {valor} itens", ln=True)
-
-        # Exibir participações em bancas
-        pdf.cell(200, 10, txt="Participações em Bancas:", ln=True)
-        for chave, valor in contagens.items():
-            if chave in ["bancas de graduacao", "bancas de mestrado", "bancas de doutorado"]:
-                pdf.cell(200, 10, txt=f"{chave}: {valor} itens", ln=True)
-        
-        # Exibir demais contagens
-        for chave, valor in contagens.items():
-            if chave not in ["formacao_do_orientador", "orientacoes_concluidas", "orientacoes_andamento", "bancas de graduacao", "bancas de mestrado", "bancas de doutorado"]:
-                pdf.cell(200, 10, txt=f"{chave}: {valor} itens", ln=True)
-
-    pdf.output("relatorio_agrupado.pdf")
-    print("Relatório gerado: relatorio_agrupado.pdf")
 
 def exibir_resultados(resultados):
     total_contagens = {}
@@ -234,10 +169,6 @@ def main():
                 resultados[file_name] = contagens
 
     exibir_resultados(resultados)
-
-    gerar_pdf = input("\nDeseja gerar o relatório em PDF? (s/n): ").strip().lower()
-    if gerar_pdf == 's':
-        gerar_relatorio_pdf(resultados)
 
 if __name__ == "__main__":
     main()
