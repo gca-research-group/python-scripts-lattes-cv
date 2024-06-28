@@ -4,7 +4,7 @@
 
 ## Visão Geral do Projeto
 
-Este projeto visa desenvolver um modelo matemático e computacional  para ajudar alunos na seleção de um supervisor para programas de pós-graduação.
+Este projeto visa desenvolver um modelo matemático e computacional  para ajudar alunos na seleção de um supervisor para programas de pós-graduação stricto sensu.
 Analisar informações de currículos Lattes de potenciais supervisores, fornecendo métricas quantitativas sobre diversos aspectos de suas atividades acadêmicas.
 
 ## Funcionalidades
